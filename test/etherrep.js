@@ -16,9 +16,9 @@ contract('EtherRep', function(accounts) {
       .then(rating => assert.equal(rating.valueOf(), 5));
   });
 
-  it('averages ratings', function() {
+  it('averages ratings and rounds the result', function() {
     return rep.rateUser(accounts[0], 0)
-      .then(rep.rateUser.bind(rep, accounts[0], 10))
+      .then(rep.rateUser.bind(rep, accounts[0], 9))
       .then(rep.getRating.call.bind(rep, accounts[0]))
       .then(rating => assert.equal(rating.valueOf(), 5));
   });

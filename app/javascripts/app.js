@@ -7,6 +7,10 @@ function setStatus(message) {
   status.innerHTML = message;
 };
 
+function setRating(rating) {
+  document.getElementById('rating').innerHTML = rating.valueOf();
+}
+
 function refreshBalance() {
   var meta = MetaCoin.deployed();
 
@@ -36,6 +40,27 @@ function sendCoin() {
   });
 };
 
+function refreshRating() {
+  var rep = EtherRep.deployed();
+
+  return rep.getRating.call(account, {from: account}).then(rating => {
+    return setRating(rating);
+  }).catch(e => console.error(e));
+}
+
+function submitRating() {
+  var rep = EtherRep.deployed();
+  var rating = parseInt(document.getElementById('newRating').value);
+
+  setStatus(`Rating ${account} with ${rating}. please wait`);
+  return rep.rateUser(account, rating, {from: account})
+    .then(tx_id => {
+      setStatus('Finished.');
+      return refreshRating();
+    })
+    .catch(e => console.error(e));
+}
+
 window.onload = function() {
   web3.eth.getAccounts(function(err, accs) {
     if (err != null) {
@@ -52,5 +77,6 @@ window.onload = function() {
     account = accounts[0];
 
     refreshBalance();
+    refreshRating();
   });
 }
