@@ -55,7 +55,7 @@ function submitRating() {
   setStatus(`Rating ${account} with ${rating}. please wait`);
   return rep.rateUser(account, rating, {from: account})
     .then(tx_id => {
-      setStatus('Finished.');
+      setStatus('Finished. tx_id=' + tx_id);
       return refreshRating();
     })
     .catch(e => console.error(e));

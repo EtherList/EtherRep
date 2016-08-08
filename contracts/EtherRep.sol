@@ -1,5 +1,5 @@
 contract EtherRep {
-  event Rating(address from, address to, uint rating);
+  event Rating(address from, address to, uint rating, uint newTotalRating);
 
   mapping (address => uint) numRatings;
   mapping (address => uint) reputation;
@@ -11,6 +11,6 @@ contract EtherRep {
   function rateUser(address who, uint rating) {
     numRatings[who] += 1;
     reputation[who] += rating/numRatings[who] - reputation[who]/numRatings[who];
-    Rating(msg.sender, who, rating);
+    Rating(msg.sender, who, rating, reputation[who]);
   }
 }
