@@ -1,16 +1,33 @@
 contract EtherRep {
-  event Rating(address from, address to, uint rating, uint newTotalRating);
+  event Rating(address from, address to, uint repPoints, uint newTotalRating);
 
   mapping (address => uint) numRatings;
   mapping (address => uint) reputation;
 
-  function getRating(address who) returns(uint) {
+  function getReputation(address who) returns(uint) {
     return reputation[who];
   }
 
-  function rateUser(address who, uint rating) {
+  function getNumRatings(address who) returns(uint) {
+    return numRatings[who];
+  }
+
+  function increaseRep(address who) {
+    uint repPoints = 10;
     numRatings[who] += 1;
-    reputation[who] += rating/numRatings[who] - reputation[who]/numRatings[who];
-    Rating(msg.sender, who, rating, reputation[who]);
+    reputation[who] += repPoints;
+
+    Rating(msg.sender, who, repPoints, reputation[who]);
+  }
+
+  function decreaseRep(address who) {
+    numRatings[who] += 1;
+    uint stdDecriment = 10;
+    uint percentDecriment = reputation[who] / 10;
+    uint repPoints = stdDecriment > percentDecriment ? stdDecriment : percentDecriment;
+
+    reputation[who] -= repPoints;
+
+    Rating(msg.sender, who, repPoints, reputation[who]);
   }
 }
