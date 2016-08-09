@@ -51,14 +51,22 @@ function refreshRating() {
 function submitRating() {
   var rep = EtherRep.deployed();
   var rating = parseInt(document.getElementById('newRating').value);
+  var accountToRate = document.getElementById('receiver').value;
 
-  setStatus(`Rating ${account} with ${rating}. please wait`);
-  return rep.rateUser(account, rating, {from: account})
+  setStatus(`Rating ${accountToRate} with ${rating}. please wait`);
+  return rep.rateUser(accountToRate, rating, {from: account})
     .then(tx_id => {
       setStatus('Finished. tx_id=' + tx_id);
       return refreshRating();
     })
     .catch(e => console.error(e));
+}
+
+function loginAs(ix) {
+  account = accounts[ix];
+  document.getElementById('currentWallet').innerHTML = account;
+  refreshBalance();
+  refreshRating();
 }
 
 window.onload = function() {
@@ -73,10 +81,10 @@ window.onload = function() {
       return;
     }
 
+    console.log(accs);
     accounts = accs;
-    account = accounts[0];
-
-    refreshBalance();
-    refreshRating();
+    loginAs(0);
   });
 }
+
+window.loginAs = loginAs;
