@@ -1,26 +1,27 @@
 {
-  "name": "EtherRep",
+  "name": "etherrep",
   "version": "1.0.0",
   "description": "",
-  "main": "truffle.js",
+  "main": "build/app.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "truffle test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/donovanCarreno/EtherRep.git"
+    "url": "git+https://github.com/EtherList/EtherRep.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/donovanCarreno/EtherRep/issues"
+    "url": "https://github.com/EtherList/EtherRep/issues"
   },
-  "homepage": "https://github.com/donovanCarreno/EtherRep#readme",
+  "homepage": "https://github.com/EtherList/EtherRep#readme",
   "devDependencies": {
-    "bluebird": "^3.4.1"
+    "bluebird": "^3.4.1",
+    "truffle": "^2.0.7"
   }
 }
