@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("BasicContract error: Please call setProvider() first before calling new().");
+      throw new Error("ContractProvider error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("BasicContract error: contract binary not set. Can't deploy new instance.");
+      throw new Error("ContractProvider error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("BasicContract contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BasicContract: " + unlinked_libraries);
+      throw new Error("ContractProvider contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of ContractProvider: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to BasicContract.at(): " + address);
+      throw new Error("Invalid address passed to ContractProvider.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: BasicContract not deployed or address not set.");
+      throw new Error("Cannot find deployed address: ContractProvider not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -328,79 +328,24 @@ var Web3 = require("web3");
         "constant": false,
         "inputs": [
           {
-            "name": "who",
-            "type": "address"
+            "name": "name",
+            "type": "bytes32"
           }
         ],
-        "name": "remove",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "markCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
+        "name": "contracts",
         "outputs": [
           {
-            "name": "",
+            "name": "addr",
             "type": "address"
           }
         ],
         "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "completed",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "isCompleted",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "name": "sellerWallet",
-            "type": "address"
-          },
-          {
-            "name": "buyerWallet",
-            "type": "address"
-          }
-        ],
-        "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x6060604081815280610195833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506101478061004e6000396000f3606060405260e060020a600035046329092d0e811461004757806344b45c50146100725780638da5cb5b1461009a578063e420bdf4146100ac578063fa391c64146100c7575b005b61004560043560005433600160a060020a039081169116141561014457600054600160a060020a0316ff5b61004533600160a060020a03166000908152600360205260409020805460ff19166001179055565b610113600054600160a060020a031681565b61013060043560036020526000908152604090205460ff1681565b610130600154600160a060020a031660009081526003602052604081205460ff16801561010e5750600254600160a060020a031660009081526003602052604090205460ff165b905090565b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b5056",
-    "updated_at": 1471628763804,
-    "links": {}
+    "unlinked_binary": "0x606060405260268060106000396000f3606060405260e060020a6000350463ec56a3738114601a575b005b60006060908152602090f3",
+    "updated_at": 1471628763805,
+    "links": {},
+    "address": "0xc6b93c0fd517b4bc4098ed15c6b197f4933cb662"
   }
 };
 
@@ -466,7 +411,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "BasicContract";
+  Contract.contract_name   = Contract.prototype.contract_name   = "ContractProvider";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +448,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.BasicContract = Contract;
+    window.ContractProvider = Contract;
   }
 })();

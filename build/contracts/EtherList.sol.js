@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("BasicContract error: Please call setProvider() first before calling new().");
+      throw new Error("EtherList error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("BasicContract error: contract binary not set. Can't deploy new instance.");
+      throw new Error("EtherList error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("BasicContract contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BasicContract: " + unlinked_libraries);
+      throw new Error("EtherList contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of EtherList: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to BasicContract.at(): " + address);
+      throw new Error("Invalid address passed to EtherList.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: BasicContract not deployed or address not set.");
+      throw new Error("Cannot find deployed address: EtherList not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -328,10 +328,39 @@ var Web3 = require("web3");
         "constant": false,
         "inputs": [
           {
-            "name": "who",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
+        "outputs": [
+          {
+            "name": "res",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "EtherRepAddr",
             "type": "address"
           }
         ],
+        "name": "setEtherRepAddress",
+        "outputs": [
+          {
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
         "name": "remove",
         "outputs": [],
         "type": "function"
@@ -339,34 +368,10 @@ var Web3 = require("web3");
       {
         "constant": false,
         "inputs": [],
-        "name": "markCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
+        "name": "deposit",
         "outputs": [
           {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "completed",
-        "outputs": [
-          {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
@@ -374,33 +379,63 @@ var Web3 = require("web3");
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "isCompleted",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "name": "permLvl",
+            "type": "uint8"
+          }
+        ],
+        "name": "setPermission",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
         "type": "function"
       },
       {
+        "inputs": [],
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
         "inputs": [
           {
-            "name": "sellerWallet",
-            "type": "address"
+            "indexed": false,
+            "name": "result",
+            "type": "bool"
           },
           {
-            "name": "buyerWallet",
+            "indexed": false,
+            "name": "addr",
             "type": "address"
           }
         ],
-        "type": "constructor"
+        "name": "SetERAddress",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "name": "Removed",
+        "type": "event"
       }
     ],
-    "unlinked_binary": "0x6060604081815280610195833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506101478061004e6000396000f3606060405260e060020a600035046329092d0e811461004757806344b45c50146100725780638da5cb5b1461009a578063e420bdf4146100ac578063fa391c64146100c7575b005b61004560043560005433600160a060020a039081169116141561014457600054600160a060020a0316ff5b61004533600160a060020a03166000908152600360205260409020805460ff19166001179055565b610113600054600160a060020a031681565b61013060043560036020526000908152604090205460ff1681565b610130600154600160a060020a031660009081526003602052604081205460ff16801561010e5750600254600160a060020a031660009081526003602052604090205460ff165b905090565b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b5056",
-    "updated_at": 1471628763804,
-    "links": {}
+    "unlinked_binary": "0x606060405260018054600160a060020a0319163317905561074d806100246000396000f3606060405260e060020a60003504632e1a7d4d81146100475780639b78ab8c14610063578063a7f43779146100e5578063d0e30db014610155578063dd5ddfe81461016e575b005b61019e600435600060006000600084600014156101be576101b6565b61019e60043560008054600160a060020a0316811480159061009457508054600160a060020a039081163390911614155b156103b657604080516000815233600160a060020a0316602082015281517f478ca9fa409ed0a978c1cffa73079cd2fa7639ccc212de1aca7cdff22e964cca929181900390910190a1506000610420565b610045600054600160a060020a0390811633909116141561042557604080516001815290517f24c4bae7274eaaa05e77fa973392521891dd357120309693e441758e565531959181900360200190a1600060009054906101000a9004600160a060020a0316600160a060020a0316ff5b61019e600060006000600034600014156104655761045f565b61019e600435602435600154600090819033600160a060020a0390811691161461065757600091505b5092915050565b604080519115158252519081900360200190f35b8093505b505050919050565b604080516000805460e060020a63ec56a37302835260ec60020a620726570260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257506040805180516000805460e060020a63ec56a37302845260c960020a663832b936b9b2310260048501529351919850600160a060020a03939093169450602482810193602093839003909101908290876161da5a03f1156100025750505060405180519060200150915082600160a060020a0316600014806102a2575081600160a060020a03166000145b806103035750600182600160a060020a031663b409ea4e336040518260e060020a0281526004018082600160a060020a031681526020019150506020604051808303816000876161da5a03f1156100025750506040515160ff169190911090505b1561032f5760405133600160a060020a031690600090349082818181858883f1935050505093506101b6565b82600160a060020a031663f3fef3a333876040518360e060020a0281526004018083600160a060020a03168152602001828152602001925050506020604051808303816000876161da5a03f1156100025750506040515191505080156101b25760405133600160a060020a031690600090879082818181858883f1935050505093506101b6565b6000805473ffffffffffffffffffffffffffffffffffffffff19168317908190556040805160018152600160a060020a0392909216602083015280517f478ca9fa409ed0a978c1cffa73079cd2fa7639ccc212de1aca7cdff22e964cca9281900390910190a15060015b919050565b604080516000815290517f24c4bae7274eaaa05e77fa973392521891dd357120309693e441758e565531959181900360200190a1565b8093505b50505090565b604080516000805460e060020a63ec56a37302835260ec60020a620726570260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257506040805180516000805460e060020a63ec56a37302845260c960020a663832b936b9b2310260048501529351919850600160a060020a03939093169450602482810193602093839003909101908290876161da5a03f1156100025750505060405180519060200150915082600160a060020a031660001480610549575081600160a060020a03166000145b806105aa5750600182600160a060020a031663b409ea4e336040518260e060020a0281526004018082600160a060020a031681526020019150506020604051808303816000876161da5a03f1156100025750506040515160ff169190911090505b156105d65760405133600160a060020a031690600090349082818181858883f19350505050935061045f565b82600160a060020a031663f340fa0134336040518360e060020a0281526004018082600160a060020a0316815260200191505060206040518083038185886185025a03f115610002575050604051519250505080151561045b5760405133600160a060020a031690600090349082818181858883f19350505050935061045f565b600080546040805160e060020a63ec56a3730281527f7065726d7300000000000000000000000000000000000000000000000000000060048201529051600160a060020a03929092169263ec56a3739260248381019360209390839003909101908290876161da5a03f11561000257505060405151915050600160a060020a038116600014156106ea5760009150610197565b80600160a060020a031663dd5ddfe885856040518360e060020a0281526004018083600160a060020a031681526020018260ff168152602001925050506020604051808303816000876161da5a03f115610002575050604051519250610197905056",
+    "updated_at": 1471628763807,
+    "links": {},
+    "address": "0x76d531cfe76d296451858bb32deafe69d80d33f9"
   }
 };
 
@@ -466,7 +501,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "BasicContract";
+  Contract.contract_name   = Contract.prototype.contract_name   = "EtherList";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +538,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.BasicContract = Contract;
+    window.EtherList = Contract;
   }
 })();
