@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("BasicContract error: Please call setProvider() first before calling new().");
+      throw new Error("FundManager error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("BasicContract error: contract binary not set. Can't deploy new instance.");
+      throw new Error("FundManager error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("BasicContract contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BasicContract: " + unlinked_libraries);
+      throw new Error("FundManager contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of FundManager: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to BasicContract.at(): " + address);
+      throw new Error("Invalid address passed to FundManager.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: BasicContract not deployed or address not set.");
+      throw new Error("Cannot find deployed address: FundManager not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -328,10 +328,39 @@ var Web3 = require("web3");
         "constant": false,
         "inputs": [
           {
-            "name": "who",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
+        "outputs": [
+          {
+            "name": "res",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "EtherRepAddr",
             "type": "address"
           }
         ],
+        "name": "setEtherRepAddress",
+        "outputs": [
+          {
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
         "name": "remove",
         "outputs": [],
         "type": "function"
@@ -339,34 +368,10 @@ var Web3 = require("web3");
       {
         "constant": false,
         "inputs": [],
-        "name": "markCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
+        "name": "deposit",
         "outputs": [
           {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "completed",
-        "outputs": [
-          {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
@@ -374,33 +379,34 @@ var Web3 = require("web3");
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "isCompleted",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "name": "permLvl",
+            "type": "uint8"
+          }
+        ],
+        "name": "setPermission",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "name": "sellerWallet",
-            "type": "address"
-          },
-          {
-            "name": "buyerWallet",
-            "type": "address"
-          }
-        ],
+        "inputs": [],
         "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x6060604081815280610195833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506101478061004e6000396000f3606060405260e060020a600035046329092d0e811461004757806344b45c50146100725780638da5cb5b1461009a578063e420bdf4146100ac578063fa391c64146100c7575b005b61004560043560005433600160a060020a039081169116141561014457600054600160a060020a0316ff5b61004533600160a060020a03166000908152600360205260409020805460ff19166001179055565b610113600054600160a060020a031681565b61013060043560036020526000908152604090205460ff1681565b610130600154600160a060020a031660009081526003602052604081205460ff16801561010e5750600254600160a060020a031660009081526003602052604090205460ff165b905090565b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b5056",
-    "updated_at": 1471628763804,
-    "links": {}
+    "unlinked_binary": "0x606060405260018054600160a060020a03191633179055610649806100246000396000f3606060405260e060020a60003504632e1a7d4d81146100475780639b78ab8c14610063578063a7f43779146100a1578063d0e30db0146100ca578063dd5ddfe8146100e3575b005b610113600435600060006000600084600014156101335761012b565b61011360043560008054600160a060020a0316811480159061009457508054600160a060020a039081163390911614155b1561032c5750600061034f565b610045600054600160a060020a0390811633909116141561035457600054600160a060020a0316ff5b610113600060006000600034600014156103605761035a565b610113600435602435600154600090819033600160a060020a0390811691161461055357600091505b5092915050565b604080519115158252519081900360200190f35b8093505b505050919050565b604080516000805460e060020a63ec56a37302835260e060020a6362616e6b0260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257506040805180516000805460e060020a63ec56a37302845260c960020a663832b936b9b2310260048501529351919850600160a060020a03939093169450602482810193602093839003909101908290876161da5a03f1156100025750505060405180519060200150915082600160a060020a031660001480610218575081600160a060020a03166000145b806102795750600182600160a060020a031663b409ea4e336040518260e060020a0281526004018082600160a060020a031681526020019150506020604051808303816000876161da5a03f1156100025750506040515160ff169190911090505b156102a55760405133600160a060020a031690600090349082818181858883f19350505050935061012b565b82600160a060020a031663f3fef3a333876040518360e060020a0281526004018083600160a060020a03168152602001828152602001925050506020604051808303816000876161da5a03f1156100025750506040515191505080156101275760405133600160a060020a031690600090879082818181858883f19350505050935061012b565b506000805473ffffffffffffffffffffffffffffffffffffffff19168217905560015b919050565b565b8093505b50505090565b604080516000805460e060020a63ec56a37302835260e060020a6362616e6b0260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257506040805180516000805460e060020a63ec56a37302845260c960020a663832b936b9b2310260048501529351919850600160a060020a03939093169450602482810193602093839003909101908290876161da5a03f1156100025750505060405180519060200150915082600160a060020a031660001480610445575081600160a060020a03166000145b806104a65750600182600160a060020a031663b409ea4e336040518260e060020a0281526004018082600160a060020a031681526020019150506020604051808303816000876161da5a03f1156100025750506040515160ff169190911090505b156104d25760405133600160a060020a031690600090349082818181858883f19350505050935061035a565b82600160a060020a031663f340fa0134336040518360e060020a0281526004018082600160a060020a0316815260200191505060206040518083038185886185025a03f11561000257505060405151925050508015156103565760405133600160a060020a031690600090349082818181858883f19350505050935061035a565b600080546040805160e060020a63ec56a3730281527f7065726d7300000000000000000000000000000000000000000000000000000060048201529051600160a060020a03929092169263ec56a3739260248381019360209390839003909101908290876161da5a03f11561000257505060405151915050600160a060020a038116600014156105e6576000915061010c565b80600160a060020a031663dd5ddfe885856040518360e060020a0281526004018083600160a060020a031681526020018260ff168152602001925050506020604051808303816000876161da5a03f11561000257505060405151925061010c905056",
+    "updated_at": 1471628763825,
+    "links": {},
+    "address": "0x78ff1efe3e0895865c523cbe53794b3659177f2a"
   }
 };
 
@@ -466,7 +472,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "BasicContract";
+  Contract.contract_name   = Contract.prototype.contract_name   = "FundManager";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +509,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.BasicContract = Contract;
+    window.FundManager = Contract;
   }
 })();

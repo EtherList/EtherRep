@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("BasicContract error: Please call setProvider() first before calling new().");
+      throw new Error("BankDb error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("BasicContract error: contract binary not set. Can't deploy new instance.");
+      throw new Error("BankDb error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("BasicContract contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BasicContract: " + unlinked_libraries);
+      throw new Error("BankDb contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BankDb: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to BasicContract.at(): " + address);
+      throw new Error("Invalid address passed to BankDb.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: BasicContract not deployed or address not set.");
+      throw new Error("Cannot find deployed address: BankDb not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -325,48 +325,58 @@ var Web3 = require("web3");
   "default": {
     "abi": [
       {
-        "constant": false,
+        "constant": true,
         "inputs": [
           {
-            "name": "who",
+            "name": "",
             "type": "address"
           }
         ],
+        "name": "balances",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "EtherRepAddr",
+            "type": "address"
+          }
+        ],
+        "name": "setEtherRepAddress",
+        "outputs": [
+          {
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
         "name": "remove",
         "outputs": [],
         "type": "function"
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "markCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
         "inputs": [
           {
-            "name": "",
+            "name": "addr",
             "type": "address"
           }
         ],
-        "name": "completed",
+        "name": "deposit",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
@@ -374,33 +384,30 @@ var Web3 = require("web3");
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "isCompleted",
+        "inputs": [
+          {
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
         "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "name": "sellerWallet",
-            "type": "address"
-          },
-          {
-            "name": "buyerWallet",
-            "type": "address"
-          }
-        ],
-        "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x6060604081815280610195833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506101478061004e6000396000f3606060405260e060020a600035046329092d0e811461004757806344b45c50146100725780638da5cb5b1461009a578063e420bdf4146100ac578063fa391c64146100c7575b005b61004560043560005433600160a060020a039081169116141561014457600054600160a060020a0316ff5b61004533600160a060020a03166000908152600360205260409020805460ff19166001179055565b610113600054600160a060020a031681565b61013060043560036020526000908152604090205460ff1681565b610130600154600160a060020a031660009081526003602052604081205460ff16801561010e5750600254600160a060020a031660009081526003602052604090205460ff165b905090565b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b5056",
-    "updated_at": 1471628763804,
-    "links": {}
+    "unlinked_binary": "0x60606040526102f0806100126000396000f3606060405260e060020a600035046327e235e381146100475780639b78ab8c1461005f578063a7f437791461009d578063f340fa01146100c6578063f3fef3a314610178575b005b61026b60043560016020526000908152604090205481565b61027d60043560008054600160a060020a0316811480159061009057508054600160a060020a039081163390911614155b15610291575060006102b4565b610045600054600160a060020a039081163390911614156102b957600054600160a060020a0316ff5b61027d600435600080548190600160a060020a031681146102bb5760408051825460e060020a63ec56a37302825260e060020a6362616e6b0260048301529151600160a060020a03929092169163ec56a37391602481810192602092909190829003018187876161da5a03f11561000257505060405151915050600160a060020a038181163390911614156102bb57600160a060020a03831682526001602081905260409092208054340190556102dd565b61027d6004356024356000805481908190600160a060020a031681146102e357600080546040805160e060020a63ec56a37302815260e060020a6362616e6b0260048201529051600160a060020a039092169263ec56a3739260248381019360209390839003909101908290876161da5a03f1156100025750506040515192505033600160a060020a0390811690831614156102e35750600160a060020a0384166000908152600160205260409020548381106102e35760406000818120600160a060020a038881168352600160205287850390915591513390921691869082818181858883f1935050505092506102e8565b60408051918252519081900360200190f35b604080519115158252519081900360200190f35b506000805473ffffffffffffffffffffffffffffffffffffffff19168217905560015b919050565b565b60405133600160a060020a031690600090349082818181858883f19550505050505b50919050565b600092505b50509291505056",
+    "updated_at": 1471628763802,
+    "links": {},
+    "address": "0xc164102a8faf2746a6341607028e3cda1a5e0f32"
   }
 };
 
@@ -466,7 +473,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "BasicContract";
+  Contract.contract_name   = Contract.prototype.contract_name   = "BankDb";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +510,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.BasicContract = Contract;
+    window.BankDb = Contract;
   }
 })();

@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("BasicContract error: Please call setProvider() first before calling new().");
+      throw new Error("Rep error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("BasicContract error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Rep error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("BasicContract contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BasicContract: " + unlinked_libraries);
+      throw new Error("Rep contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Rep: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to BasicContract.at(): " + address);
+      throw new Error("Invalid address passed to Rep.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: BasicContract not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Rep not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -325,48 +325,53 @@ var Web3 = require("web3");
   "default": {
     "abi": [
       {
+        "constant": true,
+        "inputs": [],
+        "name": "isRepManager",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
         "constant": false,
         "inputs": [
           {
-            "name": "who",
+            "name": "EtherRepAddr",
             "type": "address"
           }
         ],
+        "name": "setEtherRepAddress",
+        "outputs": [
+          {
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
         "name": "remove",
         "outputs": [],
         "type": "function"
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "markCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
         "inputs": [
           {
-            "name": "",
+            "name": "userAddr",
             "type": "address"
           }
         ],
-        "name": "completed",
+        "name": "deposit",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
@@ -374,33 +379,59 @@ var Web3 = require("web3");
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "isCompleted",
+        "inputs": [
+          {
+            "name": "userAddr",
+            "type": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
         "outputs": [
           {
-            "name": "",
+            "name": "res",
             "type": "bool"
           }
         ],
         "type": "function"
       },
       {
+        "anonymous": false,
         "inputs": [
           {
-            "name": "sellerWallet",
-            "type": "address"
+            "indexed": false,
+            "name": "result",
+            "type": "bool"
           },
           {
-            "name": "buyerWallet",
+            "indexed": false,
+            "name": "addr",
             "type": "address"
           }
         ],
-        "type": "constructor"
+        "name": "SetERAddress",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "result",
+            "type": "bool"
+          }
+        ],
+        "name": "Removed",
+        "type": "event"
       }
     ],
-    "unlinked_binary": "0x6060604081815280610195833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506101478061004e6000396000f3606060405260e060020a600035046329092d0e811461004757806344b45c50146100725780638da5cb5b1461009a578063e420bdf4146100ac578063fa391c64146100c7575b005b61004560043560005433600160a060020a039081169116141561014457600054600160a060020a0316ff5b61004533600160a060020a03166000908152600360205260409020805460ff19166001179055565b610113600054600160a060020a031681565b61013060043560036020526000908152604090205460ff1681565b610130600154600160a060020a031660009081526003602052604081205460ff16801561010e5750600254600160a060020a031660009081526003602052604090205460ff165b905090565b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b5056",
-    "updated_at": 1471628763804,
-    "links": {}
+    "unlinked_binary": "0x6060604052610525806100126000396000f3606060405260e060020a600035046340eafba581146100475780639b78ab8c146100ef578063a7f4377914610171578063f340fa01146101e1578063f3fef3a3146101f5575b005b61020c5b600080548190600160a060020a0316811461022057600080546040805160e060020a63ec56a3730281527f7265706d616e616765720000000000000000000000000000000000000000000060048201529051600160a060020a039092169263ec56a3739260248381019360209390839003909101908290876161da5a03f1156100025750506040515133600160a060020a0390811690821614935091506102259050565b61020c60043560008054600160a060020a0316811480159061012057508054600160a060020a039081163390911614155b1561022957604080516000815233600160a060020a0316602082015281517f478ca9fa409ed0a978c1cffa73079cd2fa7639ccc212de1aca7cdff22e964cca929181900390910190a1506000610293565b610045600054600160a060020a0390811633909116141561029857604080516001815290517f24c4bae7274eaaa05e77fa973392521891dd357120309693e441758e565531959181900360200190a1600060009054906101000a9004600160a060020a0316600160a060020a0316ff5b61020c6004356000600060006102d961004b565b61020c60043560243560006000600061041161004b565b604080519115158252519081900360200190f35b600091505b5090565b6000805473ffffffffffffffffffffffffffffffffffffffff19168317908190556040805160018152600160a060020a0392909216602083015280517f478ca9fa409ed0a978c1cffa73079cd2fa7639ccc212de1aca7cdff22e964cca9281900390910190a15060015b919050565b604080516000815290517f24c4bae7274eaaa05e77fa973392521891dd357120309693e441758e565531959181900360200190a1565b8092505b5050919050565b15156102e857600092506102d2565b604080516000805460e060020a63ec56a37302835260d960020a643932b832310260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257505060405151925050600160a060020a038216600014156103845760405133600160a060020a031690600090349082818181858883f1935050505092506102d2565b81600160a060020a031663f340fa0134866040518360e060020a0281526004018082600160a060020a0316815260200191505060206040518083038185886185025a03f11561000257505060405151925050508015156102ce5760405133600160a060020a031690600090349082818181858883f1935050505092506102d2565b8092505b505092915050565b15156104205760009250610409565b604080516000805460e060020a63ec56a37302835260d960020a643932b832310260048401529251600160a060020a03939093169263ec56a3739260248181019360209392839003909101908290876161da5a03f11561000257505060405151925050600160a060020a0382166000141561049e5760009250610409565b81600160a060020a031663f3fef3a386866040518360e060020a0281526004018083600160a060020a03168152602001828152602001925050506020604051808303816000876161da5a03f11561000257505060405151915050801561040557604051600160a060020a03861690600090869082818181858883f19350505050925061040956",
+    "updated_at": 1471628763835,
+    "links": {},
+    "address": "0x01220617fab05e2cc5be13d5a1ffba68bc30cf10"
   }
 };
 
@@ -466,7 +497,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "BasicContract";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Rep";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +534,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.BasicContract = Contract;
+    window.Rep = Contract;
   }
 })();

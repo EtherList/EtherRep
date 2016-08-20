@@ -16,7 +16,7 @@ Promise.prototype.repeat = function(action, nTimes) {
   return p;
 };
 
-contract('EtherRep', function(accounts) {
+contract('Formerly EtherRep', function(accounts) {
   let rep;
 
   beforeEach(function() {
