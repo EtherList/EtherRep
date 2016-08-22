@@ -1,5 +1,3 @@
-const utils = require('./utils');
-
 contract('EtherRep', function(accounts) {
   let rep;
   let zero  = accounts[0];
