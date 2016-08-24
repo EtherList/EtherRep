@@ -1,20 +1,9 @@
 var accounts = [];
 var account;
 
-let ContractStatus = {
-  NotEtherList: 0,
-  InProgress: 1,
-  Completed: 2
-};
-
-const Satisfaction = {
-  NotYetResponded: 0,
-  Unsatisfied: 1,
-  Satisfied: 2
-};
-
 class EtherListJS {
   constructor(etherlistAddr) {
+    this.address = etherlistAddr;
     this.elist = EtherList.at(etherlistAddr);
   }
 
@@ -58,10 +47,26 @@ class EtherListJS {
     return bc.getContract();
   }
 
+  createContract(seller, buyer) {
+    return new Promise((resolve, reject) => {
+      // TODO : can I filter here?
+      let filter = this.elist.CreateContract({});
+      filter.watch((err, log) => {
+        if (err) { reject(err); }
+        filter.stopWatching();
+        resolve(log.args.newContractAddr);
+      });
+      // TODO : figure out which account to send from
+      this.elist.createContract(seller, buyer, {from: accounts[0]})
+      .catch(err => reject(err));
+    })
+  }
+
 }
 
 class BasicContractJS {
   constructor(contractAddr) {
+    this.address = contractAddr;
     this.bc = BasicContract.at(contractAddr);
   }
 
@@ -100,7 +105,7 @@ class BasicContractJS {
     .then(() => this.getSellerSatisfaction())
     .then(addBigIntAsProp('seller'))
     .then(() => this.getStatus())
-    .then(addBigIntAsProp('status'))
+    .then(addBigIntAsProp('satisfaction'))
     .then(() => obj)
     .catch(err => console.error(err));
   }
@@ -127,31 +132,5 @@ window.onload = function() {
     // Set up easy access to provided accounts
     accounts = accts;
     account = accts[0];
-
-    // testing
-    // 
-    
-    let elistAddr = '0x80ca38a52bc00fa7b0060b43cceffed5979c16bc';
-    let elist = EtherList.at(elistAddr);
-    let bcAddr;
-    let bcjs;
-    let wait = ms => () => new Promise(resolve => setTimeout(resolve, ms));
-
-    elist.CreateContract({}).watch((err, log) => {
-      if (err) console.error(err);
-      console.log('contract created at ' + log.args.newContractAddr)
-      bcAddr = log.args.newContractAddr;
-      bcjs = new BasicContractJS(bcAddr);
-    });
-
-    elist.createContract(accounts[1], accounts[2], {from: accounts[0]})
-    .then(wait(1000))
-    .then(() => bcjs.markSatisfied(accounts[1]))
-    .then(() => bcjs.markUnsatisfied(accounts[2]))
-    .then(() => new EtherListJS(elistAddr).getContractStatus(bcAddr))
-    .then(c => console.log(c))
-    .catch(bla => console.error(bla))
   });
-
-
 }
