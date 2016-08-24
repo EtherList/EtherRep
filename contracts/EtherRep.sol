@@ -1,42 +1,48 @@
-import "./BasicContract.sol";
-
 contract EtherRep {
-  event Rating(address from, address to, uint repPoints, uint newTotalRating);
-  event DeployBasicContract(address contractt);
 
-  mapping (address => uint) numRatings;
-  mapping (address => uint) reputation;
+  // TODO : add events for listeners
+  
+  mapping (address => uint) public maxIncrement;
+  mapping (address => uint) public maxDecrement;
+  mapping (address => uint) public reputation;
+  address owner;
 
-  function getReputation(address who) returns(uint) {
-    return reputation[who];
+  function EtherRep() {
+    owner = msg.sender;
   }
 
-  function getNumRatings(address who) returns(uint) {
-    return numRatings[who];
+  function increaseReputation(address userAddr, uint points) returns (bool success) {
+    // 1. check permissions, cap points
+    uint increment = points > maxIncrement[msg.sender] ? maxIncrement[msg.sender] : points;
+    if (increment == 0) {
+      return false;
+    }
+    // 2. increase reputation
+    reputation[userAddr] += increment;
+    // 3. alert listeners
+    return true;
   }
 
-  function increaseRep(address who) {
-    uint repPoints = 10;
-    numRatings[who] += 1;
-    reputation[who] += repPoints;
-
-    Rating(msg.sender, who, repPoints, reputation[who]);
+  function decreaseReputation(address userAddr, uint points) returns (bool success) {
+    // 1. check permissions, cap points
+    uint decrement = points > maxDecrement[msg.sender] ? maxDecrement[msg.sender] : points;
+    // 2. decrease reputation, check for underflow
+    uint newRep = reputation[userAddr] - decrement;
+    reputation[userAddr] = newRep > reputation[userAddr] ? 0 : newRep;
+    // 3. alert listeners
+    return true;
   }
 
-  function decreaseRep(address who) {
-    numRatings[who] += 1;
-    uint stdDecriment = 10;
-    uint percentDecriment = reputation[who] / 10;
-    uint repPoints = stdDecriment > percentDecriment ? stdDecriment : percentDecriment;
-
-    reputation[who] -= repPoints;
-
-    Rating(msg.sender, who, repPoints, reputation[who]);
+  function setPermissionLimits(address factoryAddr, uint maxInc, uint maxDec) returns (bool success) {
+    // 1. check permission
+    if (msg.sender != owner) {
+      return false;
+    }
+    // 2. set limits
+    maxIncrement[factoryAddr] = maxInc;
+    maxDecrement[factoryAddr] = maxDec;
+    // 3. notify listeners
+    return true;
   }
 
-  function deployBasicContract(address seller, address buyer) returns (address) {
-    address c = address(new BasicContract(seller, buyer));
-    DeployBasicContract(c);
-    return c;
-  }
 }

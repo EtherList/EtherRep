@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("Migrations error: Please call setProvider() first before calling new().");
+      throw new Error("EtherList error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("Migrations error: contract binary not set. Can't deploy new instance.");
+      throw new Error("EtherList error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("Migrations contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Migrations: " + unlinked_libraries);
+      throw new Error("EtherList contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of EtherList: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to Migrations.at(): " + address);
+      throw new Error("Invalid address passed to EtherList.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: Migrations not deployed or address not set.");
+      throw new Error("Cannot find deployed address: EtherList not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -328,57 +328,88 @@ var Web3 = require("web3");
         "constant": false,
         "inputs": [
           {
-            "name": "new_address",
+            "name": "contractAddr",
             "type": "address"
           }
         ],
-        "name": "upgrade",
+        "name": "completeContract",
         "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "last_completed_migration",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
         "type": "function"
       },
       {
         "constant": false,
         "inputs": [
           {
-            "name": "completed",
-            "type": "uint256"
+            "name": "seller",
+            "type": "address"
+          },
+          {
+            "name": "buyer",
+            "type": "address"
           }
         ],
-        "name": "setCompleted",
-        "outputs": [],
+        "name": "createContract",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
         "type": "function"
       },
       {
+        "constant": true,
         "inputs": [],
+        "name": "erep",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "contractStatii",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint8"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "name": "etherrepAddr",
+            "type": "address"
+          }
+        ],
         "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "newContractAddr",
+            "type": "address"
+          }
+        ],
+        "name": "CreateContract",
+        "type": "event"
       }
     ],
-    "unlinked_binary": "0x606060405260008054600160a060020a0319163317905560f7806100236000396000f3606060405260e060020a60003504630900f01081146038578063445df0ac1460b05780638da5cb5b1460b8578063fdacd5761460c9575b005b60366004356000805433600160a060020a039081169116141560ac576001547ffdacd5760000000000000000000000000000000000000000000000000000000060609081526064919091528291600160a060020a0383169163fdacd5769160849160248183876161da5a03f1156002575050505b5050565b60ed60015481565b60ed600054600160a060020a031681565b603660043560005433600160a060020a039081169116141560ea5760018190555b50565b6060908152602090f3",
-    "updated_at": 1471921560125
+    "unlinked_binary": "0x606060405260405160208061075d83395060806040525160018054600160a060020a03199081168317909155600280549091163317905550610718806100456000396000f3606060405260e060020a600035046317c1f620811461003c5780633c46c43c146100635780636fc49b4514610129578063f9770c841461013b575b005b61003a600435600254600090819033600160a060020a039081169116141561017d576104af565b61015660043560243560008083836060610264806104b48339018083600160a060020a0316815260200182600160a060020a0316815260200192505050604051809103906000f0905060016000600050600083600160a060020a0316815260200190815260200160002060006101000a81548160ff021916908302179055507ff5b7f3f60acd3043a8ea44f042bf8abc20b068039901e50052f03e078ff3d9f0816040518082600160a060020a0316815260200191505060405180910390a19392505050565b610156600154600160a060020a031681565b61017360043560006020819052908152604090205460ff1681565b60408051600160a060020a03929092168252519081900360200190f35b6060908152602090f35b33600160a060020a031681526020819052604081205460ff1660011480156101b6575082600160a060020a031633600160a060020a0316145b156104af5760408120805460ff191660021790557f4e69d560000000000000000000000000000000000000000000000000000000006060908152339250600160a060020a03831690634e69d5609060649060209060048187876161da5a03f11561000257505060405151915050600281141561037057600160009054906101000a9004600160a060020a0316600160a060020a031663ded86d6883600160a060020a03166308551a536040518160e060020a0281526004018090506020604051808303816000876161da5a03f11561000257505060408051805160e360020a631bdb0dad028252600160a060020a03166004820152600a602482015290516044828101935060209282900301816000876161da5a03f11561000257506040805160015460e160020a6338a86c570282529151600160a060020a03928316945091861691637150d8ae9160048181019260209290919082900301816000876161da5a03f11561000257505060408051805160e360020a631bdb0dad028252600160a060020a03166004820152600a602482015290516044828101935060209282900301816000876161da5a03f11561000257506104af915050565b600160009054906101000a9004600160a060020a0316600160a060020a031663ed9fa61b83600160a060020a03166308551a536040518160e060020a0281526004018090506020604051808303816000876161da5a03f11561000257505060408051805160e060020a63ed9fa61b028252600160a060020a031660048201526005602482015290516044828101935060209282900301816000876161da5a03f11561000257506040805160015460e160020a6338a86c570282529151600160a060020a03928316945091861691637150d8ae9160048181019260209290919082900301816000876161da5a03f11561000257505060408051805160e060020a63ed9fa61b028252600160a060020a031660048201526005602482015290516044828101935060209282900301816000876161da5a03f115610002575050505b505050566060604081815280610264833960a090525160805160008054600160a060020a0319908116331790915560018054821684179055600280549091168217905550506102168061004e6000396000f3606060405236156100565760e060020a600035046308551a5381146100585780630ea656481461006a57806312d298d2146100855780634e69d560146100b15780637150d8ae14610107578063ace864e814610119575b005b61012b600154600160a060020a031681565b61014860043560036020526000908152604090205460ff1681565b61005660043533600160a060020a031660009081526003602052604081205460ff16146101c8576101c5565b6101485b600254600160a060020a03908116600090815260036020526040808220546001549093168252812054909160ff9081169116106101f257600254600160a060020a03168152604081205460ff16610211565b61012b600254600160a060020a031681565b61012b600054600160a060020a031681565b60408051600160a060020a03929092168252519081900360200190f35b60408051918252519081900360200190f35b11156101c55760008054604080517f17c1f62000000000000000000000000000000000000000000000000000000000815230600160a060020a039081166004830152915192909116926317c1f62092602483810193829003018183876161da5a03f115610002575050505b50565b33600160a060020a03166000908152600360205260408120805460ff19168317905561015a6100b5565b600154600160a060020a031660009081526003602052604090205460ff165b90509056",
+    "updated_at": 1471921811997
   }
 };
 
@@ -444,7 +475,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "Migrations";
+  Contract.contract_name   = Contract.prototype.contract_name   = "EtherList";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -481,6 +512,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.Migrations = Contract;
+    window.EtherList = Contract;
   }
 })();
