@@ -49,12 +49,13 @@ class EtherListJS {
 
   createContract(seller, buyer) {
     return new Promise((resolve, reject) => {
-      // TODO : can I filter here?
       let filter = this.elist.CreateContract({});
       filter.watch((err, log) => {
         if (err) { reject(err); }
-        filter.stopWatching();
-        resolve(log.args.newContractAddr);
+        if (log.args.sellerAddr === seller && log.args.buyerAddr === buyer) {
+          filter.stopWatching();
+          resolve(log.args.newContractAddr);
+        }
       });
       // TODO : figure out which account to send from
       this.elist.createContract(seller, buyer, {from: accounts[0]})
