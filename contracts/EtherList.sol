@@ -1,7 +1,7 @@
 import "./EtherRep.sol";
 
 contract EtherList {
-  event CreateContract(address newContractAddr);
+  event CreateContract(address newContractAddr, address sellerAddr, address buyerAddr);
 
   enum ContractStatus { NotEtherList, InProgress, Completed }
 
@@ -19,7 +19,7 @@ contract EtherList {
     address c = address(new BasicContract(seller, buyer));
     // 2. register address of contract in contractStatii
     contractStatii[c] = ContractStatus.InProgress;
-    CreateContract(c);
+    CreateContract(c, seller, buyer);
     return c;
   }
 
