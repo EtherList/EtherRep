@@ -3,8 +3,9 @@ var account;
 
 class EtherListJS {
   constructor(etherlistAddr) {
-    this.address = etherlistAddr;
-    this.elist = EtherList.at(etherlistAddr);
+    const mordenAddr = '0x8A833B153d7B3eb279006aB9E03ddD1E7887A310';
+    this.address = etherlistAddr || mordenAddr;
+    this.elist = EtherList.at(this.address);
   }
 
   /**
@@ -61,6 +62,12 @@ class EtherListJS {
       this.elist.createContract(seller, buyer, {from: accounts[0]})
       .catch(err => reject(err));
     })
+  }
+
+  getReputation(wallet) {
+    return this.elist.erep.call()
+    .then(erepAddr => EtherRep.at(erepAddr).reputation.call(wallet))
+    .then(bigInt => bigInt.valueOf());
   }
 
 }
@@ -127,11 +134,11 @@ window.onload = function() {
     }
 
     if (accts.length === 0) {
-      return console.error('Couldn\'t get any accounts! Make sure your Ethereum client is configured correctly.');
+      console.error('Couldn\'t get any accounts! Make sure your Ethereum client is configured correctly.');
+    } else {
+      // Set up easy access to provided accounts
+      accounts = accts;
+      account = accts[0];
     }
-
-    // Set up easy access to provided accounts
-    accounts = accts;
-    account = accts[0];
   });
 }
